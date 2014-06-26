@@ -8,7 +8,8 @@ This component simply abstracts access to REST APIs providing some helper functi
 Compatible with at least CF8 and above.  Supports rate-limiting, debug dumps of requests and responses and returns
 a simple structure of data for parsing.  
 
-For use as a low-level HTTP handler or with my API clients: 
+For use with my API clients or as a low-level REST API client.  Centralizes the (sometimes insane) error handling for CFHTTP and normalizes responses to assist with unit testing.
 
 * https://github.com/ghidinelli/batchbook-api-coldfusion
 * https://github.com/ghidinelli/eventful-api-coldfusion
+* https://github.com/ghidinelli/hubspot-api-coldfusion

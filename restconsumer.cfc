@@ -96,6 +96,7 @@
 		<cfargument name="timeout" type="numeric" required="true" />
 		<cfargument name="headers" type="struct" required="false" default="#structNew()#" />
 		<cfargument name="payload" type="any" required="false" default="#structNew()#" />
+		<cfargument name="encoded" type="boolean" required="false" default="true" /><!--- oauth requests may need form/url parameters to not be encoded due to special urlencoding already performed --->
 
 		<cfset var CFHTTP = "" />
 		<cfset var key = "" />
@@ -137,7 +138,7 @@
 					<cfhttpparam value="#arguments.payload#" type="body" />--->
 				<cfif isStruct(arguments.payload)>
 					<cfloop collection="#arguments.payload#" item="key">
-						<cfhttpparam name="#key#" value="#arguments.payload[key]#" type="#paramType#" />
+						<cfhttpparam name="#key#" value="#arguments.payload[key]#" type="#paramType#" encoded="#arguments.encoded#" />
 					</cfloop>
 				<cfelseif isSimpleValue(arguments.payload) AND len(arguments.payload)>
 					<cfhttpparam value="#arguments.payload#" type="body" />
@@ -146,6 +147,7 @@
 			
 			<cfif variables.debug>
 				<cfdump var="#cfhttp#" output="console" label="Response CFHTTP" />
+				<cfif NOT isSimpleValue(cfhttp.fileContent)><cfdump var="#toString(cfhttp.fileContent)#" output="console" label="Response CFHTTP Stringifed" /></cfif>
 			</cfif>
 			
 			<cfcatch type="any">
@@ -191,7 +193,7 @@
 			<!--- now clean up stuff older than 1 second ago --->
 			<cfloop condition="arrayLen(variables.rate_limit_requests)">
 				<cfif (getTickCount() - variables.rate_limit_requests[1]) GT 1000>
-					<cfset arrayDeleteAt(variables.rate_limit_requests, 1 ) />
+					<cfset arrayDeleteAt(variables.rate_limit_requests, 1) />
 				<cfelse>
 					<cfbreak />
 				</cfif>
